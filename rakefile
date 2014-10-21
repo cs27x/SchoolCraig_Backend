@@ -1,0 +1,13 @@
+require 'rubygems'
+require 'rake'
+require 'rake/testtask'
+
+BASE_DIR = File.dirname(__FILE__)
+
+task :watch do
+  system "ruby app.rb"
+end
+
+task :test do
+  system "ruby app_test.rb"
+end
