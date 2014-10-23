@@ -6,3 +6,5 @@ gem "activerecord"
 gem "sinatra-activerecord"
 gem 'rack-test'
 gem 'minitest'
+gem 'aws-sdk'
+gem 'rake'

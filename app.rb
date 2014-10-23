@@ -5,6 +5,7 @@ require 'sinatra'
 require 'json'
 require 'sinatra/activerecord'
 require 'securerandom'
+require 'pg'
 
 RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV

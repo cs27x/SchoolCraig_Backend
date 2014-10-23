@@ -1,4 +1,8 @@
 require 'rubygems'
+require_relative 'app'
+require 'sinatra'
+require 'sinatra/activerecord'
+require 'sinatra/activerecord/rake'
 require 'rake'
 require 'rake/testtask'
 
@@ -11,3 +15,5 @@ end
 task :test do
   system "ruby app_test.rb"
 end
+
+
