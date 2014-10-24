@@ -76,13 +76,13 @@ post '/post/new/?' do
   # parses body of post request
   body = request.body.read
   body = JSON.parse(body)
-  user = body['user']
+  user_id = body['user_id']
   description = body['description']
 
-  if !(description.nil? || user.nil?)
+  if !(description.nil? || user_id.nil?)
     # logic for email verification goes here
     uuid = SecureRandom.uuid
-    Post.create(id: uuid, user: user, description: description)
+    Post.create(id: uuid, user_id: user_id, description: description)
     { status: 'success' }.to_json
   else
     { status: 'failure' }.to_json
@@ -94,13 +94,14 @@ post '/user/new/?' do
   # parses body of post request
   body = request.body.read
   body = JSON.parse(body)
+  uuid = body['id']
   fname = body['fname']
   lname = body['lname']
   email = body['email']
 
   if !(fname.nil? || lname.nil? || email.nil?)
     # logic for email verification goes here
-    uuid = SecureRandom.uuid
+    uuid ||= SecureRandom.uuid
     User.create(id: uuid, fname: fname, lname: lname, email: email)
     { status: 'success' }.to_json
   else

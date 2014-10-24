@@ -1,0 +1,197 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "SchoolCraig API",
+        "description": "RESTful API for SchoolCraig Project",
+        "version": "1.0.0"
+    },
+    "host": "localhost:4567",
+    "schemes": [
+        "http"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/user": {
+            "get": {
+                "summary": "All Users",
+                "description": "Lists all users in the Database",
+                "responses": {
+                    "200": {
+                        "description": "An array of User Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/id/{userid}": {
+            "get": {
+                "summary": "User by ID",
+                "description": "Lists all users in the Database",
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "id for post",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of User Objects",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/new": {
+            "post": {
+                "summary": "Creates new User",
+                "description": "Lists all users in the Database",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "User"
+                        },
+                        "description": "User object",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of User Objects",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/post": {
+            "get": {
+                "summary": "All Posts",
+                "description": "Lists all posts in the Database",
+                "responses": {
+                    "200": {
+                        "description": "An array of Post Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "Post"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/post/id/{postid}": {
+            "get": {
+                "summary": "Post by ID",
+                "description": "Lists all users in the Database",
+                "parameters": [
+                    {
+                        "name": "postid",
+                        "in": "path",
+                        "description": "id for user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Specified Post Object",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "Post"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/post/new": {
+            "post": {
+                "summary": "Creates new Post",
+                "description": "Takes a Post in JSON form and writes to the database.",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "Post"
+                        },
+                        "description": "Post object",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Succesful write to database"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "unique id for user"
+                },
+                "fname": {
+                    "type": "string",
+                    "description": "First name of user"
+                },
+                "lname": {
+                    "type": "string",
+                    "description": "Last name of user"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email of user"
+                }
+            }
+        },
+        "Post": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "unique id for user"
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "First name of user"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Last name of user"
+                },
+                "date": {
+                    "type": "string",
+                    "description": "Email of user"
+                }
+            }
+        }
+    }
+}
