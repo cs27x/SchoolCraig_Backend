@@ -90,7 +90,7 @@
                 }
             }
         },
-        "/user/new": {
+        "/user": {
             "post": {
                 "summary": "Creates new User",
                 "description": "Lists all users in the Database",
@@ -198,7 +198,7 @@
                 }
             }
         },
-        "/post/new": {
+        "/post": {
             "post": {
                 "summary": "Creates new Post",
                 "description": "Takes a Post in JSON form and writes to the database.",
@@ -222,22 +222,18 @@
             }
         },
         "/user/auth": {
-            "get": {
+            "post": {
                 "summary": "Authenticates user",
                 "description": "Authenticates a given user by passed in credentials",
                 "parameters": [
                     {
-                        "name": "email",
-                        "in": "query",
-                        "type": "string",
-                        "description": "email of user",
-                        "required": true
-                    },
-                    {
-                        "name": "pass",
-                        "in": "query",
-                        "type": "string",
-                        "description": "hashed password of user",
+                        "name": "auth",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "Auth"
+                        },
+                        "description": "Auth object",
                         "required": true
                     }
                 ],
@@ -352,6 +348,18 @@
                 "name": {
                     "type": "string",
                     "description": "name of category"
+                }
+            }
+        },
+        "Auth": {
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "description": "email of user"
+                },
+                "pass": {
+                    "type": "string",
+                    "description": "hash password of user"
                 }
             }
         }
