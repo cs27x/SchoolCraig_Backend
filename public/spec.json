@@ -13,7 +13,7 @@
         "application/json"
     ],
     "paths": {
-        "/user": {
+        "/user/all": {
             "get": {
                 "summary": "All Users",
                 "description": "Lists all users in the Database",
@@ -32,26 +32,60 @@
         },
         "/user/id/{userid}": {
             "get": {
-                "summary": "User by ID",
+                "summary": "Retrieves user by ID",
                 "description": "Lists all users in the Database",
                 "parameters": [
                     {
                         "name": "userid",
                         "in": "path",
-                        "description": "id for post",
+                        "description": "id for user",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "An array of User Objects",
+                        "description": "User Object",
                         "schema": {
                             "type": "object",
-                            "items": {
-                                "$ref": "User"
-                            }
+                            "$ref": "User"
                         }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Modifies user by ID",
+                "description": "Modifies a user specified by ID",
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "id for user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful modification"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletes user by ID",
+                "description": "Deletes a user specified by ID",
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "id for user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful deletion"
                     }
                 }
             }
@@ -77,18 +111,29 @@
                         "description": "An array of User Objects",
                         "schema": {
                             "type": "object",
-                            "items": {
-                                "$ref": "User"
-                            }
+                            "$ref": "User"
                         }
                     }
                 }
             }
         },
-        "/post": {
+        "/post/all": {
             "get": {
                 "summary": "All Posts",
                 "description": "Lists all posts in the Database",
+                "parameters": [
+                    {
+                        "name": "sortby",
+                        "description": "Sorts posts by the specified value",
+                        "enum": [
+                            "date",
+                            "category",
+                            "price"
+                        ],
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "An array of Post Objects",
@@ -120,10 +165,35 @@
                         "description": "Specified Post Object",
                         "schema": {
                             "type": "object",
-                            "items": {
-                                "$ref": "Post"
-                            }
+                            "$ref": "Post"
                         }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Modifies post by ID",
+                "description": "Modifies a post specified by ID",
+                "parameters": [
+                    {
+                        "name": "postid",
+                        "in": "path",
+                        "description": "id for post",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful modification"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletes Post",
+                "description": "Deletes a given post by id",
+                "responses": {
+                    "200": {
+                        "description": "successful deletion"
                     }
                 }
             }
@@ -150,6 +220,74 @@
                     }
                 }
             }
+        },
+        "/user/auth": {
+            "get": {
+                "summary": "Authenticates user",
+                "description": "Authenticates a given user by passed in credentials",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "type": "string",
+                        "description": "email of user",
+                        "required": true
+                    },
+                    {
+                        "name": "pass",
+                        "in": "query",
+                        "type": "string",
+                        "description": "hashed password of user",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful authentication",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "User",
+                            "description": "User object"
+                        }
+                    },
+                    "401": {
+                        "description": "Failed authentication"
+                    }
+                }
+            }
+        },
+        "/category/all": {
+            "get": {
+                "summary": "Retrieves all Categories",
+                "description": "Lists all Categoies",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/category/id/{category_id}": {
+            "get": {
+                "summary": "Retrieves all Categories",
+                "description": "Lists all Categoies",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "Category"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -170,6 +308,10 @@
                 "email": {
                     "type": "string",
                     "description": "Email of user"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "hashed password for user"
                 }
             }
         },
@@ -177,19 +319,39 @@
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "unique id for user"
+                    "description": "unique id for post"
+                },
+                "cost": {
+                    "type": "number",
+                    "description": "cost of item"
                 },
                 "user_id": {
                     "type": "string",
-                    "description": "First name of user"
+                    "description": "unique id for associated user"
                 },
                 "description": {
                     "type": "string",
-                    "description": "Last name of user"
+                    "description": "description of posting"
+                },
+                "category": {
+                    "type": "string",
+                    "description": "id for a given category"
                 },
                 "date": {
                     "type": "string",
-                    "description": "Email of user"
+                    "description": "timestamp of when the post was created"
+                }
+            }
+        },
+        "Category": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "category id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "name of category"
                 }
             }
         }

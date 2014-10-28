@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   self.primary_key = 'id'
 end
 
-get '/post/?' do
+get '/post/all' do
   content_type :json
   Post.all.to_json
 end
@@ -57,7 +57,7 @@ get '/post/id/:id' do |id|
   end
 end
 
-get '/user/?' do
+get '/user/all' do
   content_type :json
   User.all.to_json
 end
@@ -71,7 +71,7 @@ get '/user/id/:id' do |id|
   end
 end
 
-post '/post/new/?' do
+post '/post/new' do
   content_type :json
   # parses body of post request
   body = request.body.read
@@ -89,7 +89,7 @@ post '/post/new/?' do
   end
 end
 
-post '/user/new/?' do
+post '/user/new' do
   content_type :json
   # parses body of post request
   body = request.body.read
