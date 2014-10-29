@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "fname"
     t.string "lname"
     t.string "email"
+    t.string "password", limit: 64
+    t.string "salt",     limit: 32
   end
 
 end
