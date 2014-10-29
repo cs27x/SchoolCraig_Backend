@@ -101,7 +101,7 @@ post '/user' do
   email = body['email']
   password = body['pass']
 
-  if !(fname.nil? || lname.nil? || email.nil? || password.nil?)
+  if [fname, lname, email, password].all?
     # logic for email verification goes here
 
     salt = SecureRandom.hex
@@ -129,7 +129,7 @@ post '/user/auth' do
   email = body['email']
   password = body['pass']
 
-  user = User.find_by(email: email)
+  user = User.find_by(email: email) || halt(401)
   salt = user.salt
   db_password = user.password
 
