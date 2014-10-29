@@ -6,6 +6,7 @@ require 'json'
 require 'sinatra/activerecord'
 require 'securerandom'
 require 'pg'
+require 'digest'
 
 RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV
@@ -59,19 +60,19 @@ end
 
 get '/user/all' do
   content_type :json
-  User.all.to_json
+  User.all.to_json(:except => [:salt, :password])
 end
 
 get '/user/id/:id' do |id|
   content_type :json
   begin
-    User.find(id).to_json
+    User.find(id).to_json(:except => [:salt, :password])
   rescue ActiveRecord::RecordNotFound
     {}.to_json
   end
 end
 
-post '/post/new' do
+post '/post' do
   content_type :json
   # parses body of post request
   body = request.body.read
@@ -89,7 +90,7 @@ post '/post/new' do
   end
 end
 
-post '/user/new' do
+post '/user' do
   content_type :json
   # parses body of post request
   body = request.body.read
@@ -98,13 +99,48 @@ post '/user/new' do
   fname = body['fname']
   lname = body['lname']
   email = body['email']
+  password = body['pass']
 
-  if !(fname.nil? || lname.nil? || email.nil?)
+  if [fname, lname, email, password].all?
     # logic for email verification goes here
+
+    salt = SecureRandom.hex
+    password = Digest::SHA256.hexdigest(salt + password)
+
     uuid ||= SecureRandom.uuid
-    User.create(id: uuid, fname: fname, lname: lname, email: email)
+    User.create(
+      id: uuid,
+      fname: fname,
+      lname: lname,
+      email: email,
+      password: password,
+      salt: salt
+    )
     { status: 'success' }.to_json
   else
-    { status: 'failure' }.to_json
+    halt 401
   end
 end
+
+post '/user/auth' do
+  content_type :json
+  body = request.body.read
+  body = JSON.parse(body)
+  email = body['email']
+  password = body['pass']
+
+  user = User.find_by(email: email) || halt(401)
+  salt = user.salt
+  db_password = user.password
+
+  password = Digest::SHA256.hexdigest(salt + password)
+
+  if db_password == password
+    user.to_json(:except => [:salt, :password])
+  else
+    halt 401
+  end
+
+end
+
+
