@@ -7,9 +7,22 @@ require 'sinatra/activerecord'
 require 'securerandom'
 require 'pg'
 require 'digest'
+require 'mail'
 
 RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV
+
+Mail.defaults do
+  delivery_method :smtp, {
+    :address => 'smtp.sendgrid.net',
+    :port => '587',
+    :domain => 'heroku.com',
+    :user_name => ENV['SENDGRID_USERNAME'],
+    :password => ENV['SENDGRID_PASSWORD'],
+    :authentication => :plain,
+    :enable_starttls_auto => true
+  }
+end
 
 configure :production do
   ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
@@ -102,7 +115,13 @@ post '/user' do
   password = body['pass']
 
   if [fname, lname, email, password].all?
-    # logic for email verification goes here
+
+    Mail.deliver do
+      to email
+      from 'sender@heroku.com'
+      subject 'testing send mail'
+      body 'Sending email with Ruby through SendGrid!'
+    end
 
     salt = SecureRandom.hex
     password = Digest::SHA256.hexdigest(salt + password)
@@ -140,7 +159,5 @@ post '/user/auth' do
   else
     halt 401
   end
-
 end
-
 
