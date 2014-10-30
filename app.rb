@@ -12,6 +12,8 @@ require 'mail'
 RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV
 
+enable :sessions
+
 Mail.defaults do
   delivery_method :smtp, {
     :address => 'smtp.sendgrid.net',
@@ -58,6 +60,7 @@ class User < ActiveRecord::Base
 end
 
 get '/post/all' do
+  if !session[:user_id] then halt(401) end
   content_type :json
   Post.all.to_json
 end
@@ -112,7 +115,7 @@ post '/user' do
   fname = body['fname']
   lname = body['lname']
   email = body['email']
-  password = body['pass']
+  password = body['password']
 
   if [fname, lname, email, password].all?
 
@@ -146,7 +149,7 @@ post '/user/auth' do
   body = request.body.read
   body = JSON.parse(body)
   email = body['email']
-  password = body['pass']
+  password = body['password']
 
   user = User.find_by(email: email) || halt(401)
   salt = user.salt
@@ -155,9 +158,14 @@ post '/user/auth' do
   password = Digest::SHA256.hexdigest(salt + password)
 
   if db_password == password
+    session[:user_id] = user.id
     user.to_json(:except => [:salt, :password])
   else
     halt 401
   end
+end
+
+post '/user/deauth' do
+  session[:user_id] = nil
 end
 

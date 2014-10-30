@@ -224,7 +224,7 @@
         "/user/auth": {
             "post": {
                 "summary": "Authenticates user",
-                "description": "Authenticates a given user by passed in credentials",
+                "description": "Authenticates a given user by passed in credentials. Establishes a session if credentials are valid.",
                 "parameters": [
                     {
                         "name": "auth",
@@ -250,6 +250,12 @@
                         "description": "Failed authentication"
                     }
                 }
+            }
+        },
+        "/user/deauth": {
+            "post": {
+                "summary": "Deauthenticates user",
+                "description": "Ends current session"
             }
         },
         "/category/all": {
@@ -357,7 +363,7 @@
                     "type": "string",
                     "description": "email of user"
                 },
-                "pass": {
+                "password": {
                     "type": "string",
                     "description": "hash password of user"
                 }
