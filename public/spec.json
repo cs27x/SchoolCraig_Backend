@@ -13,23 +13,6 @@
         "application/json"
     ],
     "paths": {
-        "/user/all": {
-            "get": {
-                "summary": "All Users",
-                "description": "Lists all users in the Database",
-                "responses": {
-                    "200": {
-                        "description": "An array of User Objects",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "User"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/user/id/{userid}": {
             "get": {
                 "summary": "Retrieves user by ID",
@@ -91,6 +74,20 @@
             }
         },
         "/user": {
+            "get": {
+                "summary": "All Users",
+                "description": "Lists all users in the Database",
+                "responses": {
+                    "200": {
+                        "description": "An array of User Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "User"
+                            }
+                        }
+                    }
+                },
             "post": {
                 "summary": "Creates new User",
                 "description": "Lists all users in the Database",
@@ -117,7 +114,7 @@
                 }
             }
         },
-        "/post/all": {
+        "/post": {
             "get": {
                 "summary": "All Posts",
                 "description": "Lists all posts in the Database",

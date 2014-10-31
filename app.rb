@@ -74,15 +74,15 @@ get '/post/id/:id' do |id|
   end
 end
 
-get '/user/all' do
+get '/user' do
   content_type :json
-  User.all.to_json(:except => [:salt, :password])
+  User.all.to_json(:except => [:salt, :password, :activated])
 end
 
 get '/user/id/:id' do |id|
   content_type :json
   begin
-    User.find(id).to_json(:except => [:salt, :password])
+    User.find(id).to_json(:except => [:salt, :password, :activated])
   rescue ActiveRecord::RecordNotFound
     {}.to_json
   end
@@ -164,7 +164,7 @@ post '/user/auth' do
 
   if db_password == password
     session[:user_id] = user.id
-    user.to_json(:except => [:salt, :password])
+    user.to_json(:except => [:salt, :password, :activated])
   else
     halt 401
   end
