@@ -172,10 +172,8 @@ end
 
 get '/user/activate/:id' do |id|
   content_type :json
-  begin
-   user = User.find_by(id: id) || halt(401)
-   update_attribute('activated', true)
-  end
+  user = User.find_by(id: id) || halt(401)
+  user.update_attribute('activated', true)
 end
 
 
