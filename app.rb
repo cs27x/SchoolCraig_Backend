@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   self.primary_key = 'id'
 end
 
-get '/post/all' do
+get '/post' do
   if !session[:user_id] then halt(401) end
   content_type :json
   Post.all.to_json
@@ -119,14 +119,6 @@ post '/user' do
 
   if [fname, lname, email, password].all?
 
-    url = "/user/activate/",uuid
-    Mail.deliver do
-      to email
-      from 'sender@heroku.com'
-      subject 'Account activation'
-      body  "Please click", url , "to activate your account"
-    end
-
     salt = SecureRandom.hex
     password = Digest::SHA256.hexdigest(salt + password)
 
@@ -137,8 +129,18 @@ post '/user' do
       lname: lname,
       email: email,
       password: password,
-      salt: salt
+      salt: salt,
+      activated: false
     )
+
+    url = "https://school-craig.herokuapp.com/user/activate/#{uuid}?key=#{Digest::SHA256.hexdigest(salt)}"
+    Mail.deliver do
+      to email
+      from 'sender@heroku.com'
+      subject 'Account activation'
+      content_type 'text/html; charset=UTF-8'
+      body "Please click <a href='#{url}'>here</a> to activate your account"
+    end
     { status: 'success' }.to_json
   else
     halt 401
@@ -153,6 +155,8 @@ post '/user/auth' do
   password = body['password']
 
   user = User.find_by(email: email) || halt(401)
+  user.activated || halt(403)    
+
   salt = user.salt
   db_password = user.password
 
@@ -173,7 +177,14 @@ end
 get '/user/activate/:id' do |id|
   content_type :json
   user = User.find_by(id: id) || halt(401)
-  user.update_attribute('activated', true)
+  if Digest::SHA256.hexdigest(user.salt) == params['key']
+    # activates user
+    user.update_attribute('activated', true)
+    # logs user in
+    session[:user_id] = user.id
+  else
+    halt 401
+  end
 end
 
 

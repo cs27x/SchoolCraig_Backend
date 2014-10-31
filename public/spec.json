@@ -5,7 +5,7 @@
         "description": "RESTful API for SchoolCraig Project",
         "version": "1.0.0"
     },
-    "host": "localhost:4567",
+    "host": "localhost:5000",
     "schemes": [
         "http"
     ],
