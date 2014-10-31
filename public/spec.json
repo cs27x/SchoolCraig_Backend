@@ -292,6 +292,37 @@
             }
         }
     },
+     "/user/activate": {
+                "post": {
+                    "summary": "Activates user",
+                    "description": "Activates a given user by passed in ID",
+                    "parameters": [
+                        {
+                            "name": "activate",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "$ref": "Activate"
+                            },
+                            "description": "Activate object",
+                            "required": true
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Successful activation",
+                            "schema": {
+                                "type": "object",
+                                "$ref": "User",
+                                "description": "User activate object"
+                            }
+                        },
+                        "401": {
+                            "description": "Failed activation"
+                        }
+                    }
+                }
+        },
     "definitions": {
         "User": {
             "properties": {
@@ -368,6 +399,14 @@
                     "description": "hash password of user"
                 }
             }
+        },
+        "Activate": {
+	            "properties": {
+	                "email": {
+	                    "type": "string",
+	                    "description": "email of user"
+	                }
+	            }
         }
     }
 }

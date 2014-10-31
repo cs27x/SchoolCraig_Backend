@@ -122,8 +122,8 @@ post '/user' do
     Mail.deliver do
       to email
       from 'sender@heroku.com'
-      subject 'testing send mail'
-      body 'Sending email with Ruby through SendGrid!'
+      subject 'Account activation'
+     html = '<html><body>Please click <% /user/activate %> to activate your account</body></html>'
     end
 
     salt = SecureRandom.hex
@@ -167,5 +167,15 @@ end
 
 post '/user/deauth' do
   session[:user_id] = nil
+end
+
+post '/user/activate' do
+  content_type :json
+  body = request.body.read
+  body = JSON.parse(body)
+  email = body['email']
+  
+  user = User.find_by(email: email) || halt(401)
+  update_attribute('activated', true)
 end
 
