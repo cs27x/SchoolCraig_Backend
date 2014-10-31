@@ -119,11 +119,12 @@ post '/user' do
 
   if [fname, lname, email, password].all?
 
+    url = "/user/activate/",uuid
     Mail.deliver do
       to email
       from 'sender@heroku.com'
       subject 'Account activation'
-     html = '<html><body>Please click <% /user/activate %> to activate your account</body></html>'
+      body  "Please click", url , "to activate your account"
     end
 
     salt = SecureRandom.hex
@@ -169,13 +170,12 @@ post '/user/deauth' do
   session[:user_id] = nil
 end
 
-post '/user/activate' do
+get '/user/activate/:id' do |id|
   content_type :json
-  body = request.body.read
-  body = JSON.parse(body)
-  email = body['email']
-  
-  user = User.find_by(email: email) || halt(401)
-  update_attribute('activated', true)
+  begin
+   user = User.find_by(id: id) || halt(401)
+   update_attribute('activated', true)
+  end
 end
+
 
