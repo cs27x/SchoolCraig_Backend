@@ -46,10 +46,70 @@ class User < ActiveRecord::Base
   self.primary_key = 'id'
 end
 
+########## /category #############
+get '/category/all' do
+  Post.uniq.pluck(:category).to_json
+end
+
+get '/category/id/:id' do |id|
+  Post.where(category: id).to_json
+end
+
+########## /post #############
+post '/post' do
+  content_type :json
+  # parses body of post request
+  body = request.body.read
+  body = JSON.parse(body)
+  user_id = body['user_id']
+  description = body['description']
+  category = body['category']
+
+  if !(description.nil? || user_id.nil? || category.nil?)
+    # logic for email verification goes here
+    uuid = SecureRandom.uuid
+    Post.create(id: uuid, user_id: user_id, description: description, category: category)
+    { status: 'success' }.to_json
+  else
+    { status: 'failure' }.to_json
+  end
+end
+
 get '/post/all' do
-  if !session[:user_id] then halt(401) end
+  #if !session[:user_id] then halt(401) end
   content_type :json
   Post.all.to_json
+end
+
+delete '/post/id/:id' do |id|
+  if Post.delete(id) == 1
+    { status: 'success' }.to_json
+  else
+    { status: 'failure' }.to_json
+  end
+end
+
+put '/post/id/:id' do |id|
+  begin
+    Post.find(id)
+    
+    content_type :json
+    # parses body of post request
+    body = request.body.read
+    body = JSON.parse(body)
+    description = body['description']
+    category = body['category']
+  
+    if !(description.nil? || category.nil?)
+      # logic for email verification goes here
+      Post.update(id, description: description, category: category)
+      { status: 'success' }.to_json
+    else
+      { status: 'failure' }.to_json
+    end 
+  rescue ActiveRecord::RecordNotFound
+    { status: 'failure' }.to_json
+  end
 end
 
 get '/post/id/:id' do |id|
@@ -61,38 +121,7 @@ get '/post/id/:id' do |id|
   end
 end
 
-get '/user/all' do
-  content_type :json
-  User.all.to_json(:except => [:salt, :password])
-end
-
-get '/user/id/:id' do |id|
-  content_type :json
-  begin
-    User.find(id).to_json(:except => [:salt, :password])
-  rescue ActiveRecord::RecordNotFound
-    {}.to_json
-  end
-end
-
-post '/post' do
-  content_type :json
-  # parses body of post request
-  body = request.body.read
-  body = JSON.parse(body)
-  user_id = body['user_id']
-  description = body['description']
-
-  if !(description.nil? || user_id.nil?)
-    # logic for email verification goes here
-    uuid = SecureRandom.uuid
-    Post.create(id: uuid, user_id: user_id, description: description)
-    { status: 'success' }.to_json
-  else
-    { status: 'failure' }.to_json
-  end
-end
-
+########## /user #############
 post '/user' do
   content_type :json
   # parses body of post request
@@ -125,6 +154,11 @@ post '/user' do
   end
 end
 
+get '/user/all' do
+  content_type :json
+  User.all.to_json(:except => [:salt, :password])
+end
+
 post '/user/auth' do
   content_type :json
   body = request.body.read
@@ -144,10 +178,48 @@ post '/user/auth' do
   else
     halt 401
   end
-
 end
 
 post '/user/deauth' do
   session[:user_id] = nil
 end
 
+get '/user/id/:id' do |id|
+  content_type :json
+  begin
+    User.find(id).to_json(:except => [:salt, :password])
+  rescue ActiveRecord::RecordNotFound
+    {}.to_json
+  end
+end
+
+delete '/user/id/:id' do |id|
+  begin
+    User.find(id) # check if User exists
+    Post.where(user_id: id).delete_all # delete all user's posts
+    User.delete(id)
+    { status: 'success' }.to_json
+  rescue ActiveRecord::RecordNotFound
+    { status: 'failure' }.to_json
+  end
+end
+
+put '/user/id/:id' do |id|
+  begin
+    User.find(id)
+    
+    content_type :json
+    # parses body of post request
+    body = request.body.read
+    body = JSON.parse(body)
+    fname = body['fname']
+    lname = body['lname']
+    email = body['email']
+  
+    # logic for email verification goes here
+    User.update(id, fname: fname, lname: lname, email: email)
+    { status: 'success' }.to_json
+  rescue ActiveRecord::RecordNotFound
+    { status: 'failure' }.to_json
+  end
+end

@@ -191,6 +191,15 @@
             "delete": {
                 "summary": "Deletes Post",
                 "description": "Deletes a given post by id",
+                "parameters": [
+                    {
+                        "name": "postid",
+                        "in": "path",
+                        "description": "id for post",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful deletion"
@@ -282,10 +291,12 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "An array of Post Objects",
                         "schema": {
-                            "type": "object",
-                            "$ref": "Category"
+                            "type": "array",
+                            "items": {
+                                "$ref": "Post"
+                            }
                         }
                     }
                 }

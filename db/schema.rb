@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.uuid     "user_id"
     t.datetime "date",        default: "now()"
     t.text     "description"
+    t.text     "category"
   end
 
   create_table "users", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
