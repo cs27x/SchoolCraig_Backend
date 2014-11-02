@@ -5,7 +5,7 @@
         "description": "RESTful API for SchoolCraig Project",
         "version": "1.0.0"
     },
-    "host": "localhost:5000",
+    "host": "localhost:4567",
     "schemes": [
         "http"
     ],
@@ -87,7 +87,8 @@
                             }
                         }
                     }
-                },
+                }
+            },
             "post": {
                 "summary": "Creates new User",
                 "description": "Lists all users in the Database",
@@ -109,36 +110,6 @@
                         "schema": {
                             "type": "object",
                             "$ref": "User"
-                        }
-                    }
-                }
-            }
-        },
-        "/post": {
-            "get": {
-                "summary": "All Posts",
-                "description": "Lists all posts in the Database",
-                "parameters": [
-                    {
-                        "name": "sortby",
-                        "description": "Sorts posts by the specified value",
-                        "enum": [
-                            "date",
-                            "category",
-                            "price"
-                        ],
-                        "in": "query",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of Post Objects",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "Post"
-                            }
                         }
                     }
                 }
@@ -196,6 +167,34 @@
             }
         },
         "/post": {
+            "get": {
+                "summary": "All Posts",
+                "description": "Lists all posts in the Database",
+                "parameters": [
+                    {
+                        "name": "sortby",
+                        "description": "Sorts posts by the specified value",
+                        "enum": [
+                            "date",
+                            "category",
+                            "price"
+                        ],
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of Post Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "Post"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "summary": "Creates new Post",
                 "description": "Takes a Post in JSON form and writes to the database.",
@@ -252,7 +251,12 @@
         "/user/deauth": {
             "post": {
                 "summary": "Deauthenticates user",
-                "description": "Ends current session"
+                "description": "Ends current session",
+                "responses": {
+                    "200": {
+                        "description": "successful logout"
+                    }
+                }
             }
         },
         "/category/all": {
@@ -288,30 +292,6 @@
                 }
             }
         }
-    },
-    "/user/activate/{userid}": {
-                 "get": {
-                     "summary": "Activates user by ID",
-                     "description": "Activates user by ID in the Database",
-                     "parameters": [
-                         {
-                             "name": "userid",
-                             "in": "path",
-                             "description": "id for user",
-                             "required": true,
-                             "type": "string"
-                         }
-                     ],
-                     "responses": {
-                         "200": {
-                             "description": "User Object",
-                             "schema": {
-                                 "type": "object",
-                                 "$ref": "User"
-                             }
-                         }
-                     }
-                 }
     },
     "definitions": {
         "User": {
