@@ -46,13 +46,27 @@ class User < ActiveRecord::Base
   self.primary_key = 'id'
 end
 
+########## Category Class #############
+# Used to model categories with ActiveRecord and
+# communicate with the Postgres DB
+class Category < ActiveRecord::Base
+  self.table_name = 'categories'
+  self.primary_key = 'id'
+end
+
 ########## /category #############
 get '/category/all' do
-  Post.uniq.pluck(:category).to_json
+  content_type :json
+  Category.all.to_json
 end
 
 get '/category/id/:id' do |id|
-  Post.where(category: id).to_json
+  content_type :json
+  begin
+    Category.find(id).to_json
+  rescue ActiveRecord::RecordNotFound
+    {}.to_json
+  end
 end
 
 ########## /post #############
@@ -76,7 +90,7 @@ post '/post' do
 end
 
 get '/post/all' do
-  #if !session[:user_id] then halt(401) end
+  if !session[:user_id] then halt(401) end
   content_type :json
   Post.all.to_json
 end
