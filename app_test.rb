@@ -12,11 +12,6 @@ class MyAppTest < MiniTest::Unit::TestCase
     Sinatra::Application
   end
 
-  def test_root
-    get '/'
-    assert last_response.ok? , "Error in get"
-  end
-  
   ## Users
   
   def test_get_all_users_ok
@@ -25,7 +20,7 @@ class MyAppTest < MiniTest::Unit::TestCase
   end
   
   def test_post_user
-    post '/user/', params = {"name" => "Alex"}, body ={"id" => "1"}
+    post '/user', body = {"id" => "1", "fname" => "Alex"}
     assert last_response.ok? , "Error in posting a users"
   end
   
