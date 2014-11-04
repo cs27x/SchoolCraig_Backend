@@ -87,6 +87,28 @@ get '/category/id/:id' do |id|
   end
 end
 
+post '/category' do
+  unless session[:user_id] then halt(403) end
+  content_type :json
+  # parses body of post request
+  body = request.body.read
+  body = JSON.parse(body)
+  id = body['id'] || SecureRandom.uuid
+  unless isUUID?(id) then halt(401) end
+  name = body['name']
+  if Category.find_by(name: name) then halt(401) end
+
+  if name
+    Category.create(
+      id: id,
+      name: name
+    )
+  else
+    halt 401
+  end
+end
+
+
 ########## /post #############
 post '/post' do
   content_type :json
@@ -114,7 +136,6 @@ post '/post' do
 end
 
 get '/post/all' do
-  puts session[:user_id]
   unless session[:user_id] then halt(403) end
   content_type :json
   Post.all.to_json
@@ -169,6 +190,7 @@ post '/user' do
 
     salt = SecureRandom.hex
     password = Digest::SHA256.hexdigest(salt + password)
+    activated = settings.environment == :development
 
     uuid ||= SecureRandom.uuid
     User.create(
@@ -178,15 +200,17 @@ post '/user' do
       email: email,
       password: password,
       salt: salt,
-      activated: false
+      activated: activated
     )
-    url = "https://school-craig.herokuapp.com/user/activate/#{uuid}?key=#{Digest::SHA256.hexdigest(salt)}"
-    Mail.deliver do
-      to email
-      from 'sender@heroku.com'
-      subject 'Account activation'
-      content_type 'text/html; charset=UTF-8'
-      body "Please click <a href='#{url}'>here</a> to activate your account"
+    unless activated
+      url = "https://school-craig.herokuapp.com/user/activate/#{uuid}?key=#{Digest::SHA256.hexdigest(salt)}"
+      Mail.deliver do
+        to email
+        from 'sender@heroku.com'
+        subject 'Account activation'
+        content_type 'text/html; charset=UTF-8'
+        body "Please click <a href='#{url}'>here</a> to activate your account"
+      end
     end
   else
     halt 401

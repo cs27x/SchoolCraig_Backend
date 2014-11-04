@@ -282,6 +282,28 @@
                 }
             }
         },
+        "/category": {
+            "post": {
+                "summary": "Creates new category",
+                "description": "Creates a new category",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "description": "category to be created",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful creation"
+                    }
+                }
+            }
+        },
         "/category/all": {
             "get": {
                 "summary": "Retrieves all Categories",
