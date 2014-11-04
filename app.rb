@@ -99,7 +99,7 @@ post '/post' do
   category = body['category']
 
   
-  [id, user_id, category].each do |x| 
+  [id, user_id, category].compact.each do |x| 
     unless isUUID?(x) then halt(401) end
   end
 
