@@ -248,7 +248,7 @@ end
 put '/user/id/:id' do |id|
   unless isUUID?(id) then halt(401) end
 
-  # checks that the user issuing the request is the user being deleted
+  # checks that the user issuing the request is the user being modified
   unless session[:user_id] == id then halt(403) end
 
   content_type :json
