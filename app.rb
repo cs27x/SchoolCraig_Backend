@@ -273,4 +273,3 @@ get '/user/activate/:id' do |id|
     halt 401
   end
 end
-
