@@ -256,9 +256,8 @@ put '/user/id/:id' do |id|
   body = JSON.parse(body)
   fname = body['fname']
   lname = body['lname']
-  email = body['email']
   
-  User.update(id, fname: fname, lname: lname, email: email)
+  User.update(id, fname: fname, lname: lname)
 end
 
 get '/user/activate/:id' do |id|
