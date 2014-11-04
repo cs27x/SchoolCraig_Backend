@@ -147,7 +147,7 @@ get '/post/id/:id' do |id|
   begin
     Post.find(id).to_json
   rescue ActiveRecord::RecordNotFound
-    {}.to_json
+    halt 404
   end
 end
 
@@ -228,7 +228,7 @@ get '/user/id/:id' do |id|
   begin
     User.find(id).to_json(:except => [:salt, :password])
   rescue ActiveRecord::RecordNotFound
-    {}.to_json
+    halt 404
   end
 end
 
