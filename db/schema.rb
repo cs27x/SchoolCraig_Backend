@@ -25,11 +25,12 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table "users", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.string "fname"
-    t.string "lname"
-    t.string "email"
-    t.string "password", limit: 64
-    t.string "salt",     limit: 32
+    t.string  "fname"
+    t.string  "lname"
+    t.string  "email"
+    t.string  "password",  limit: 64
+    t.string  "salt",      limit: 32
+    t.boolean "activated"
   end
   
   create_table "categories", id: :uuid, default: "uuid_generate_v4()", force: true do |t|

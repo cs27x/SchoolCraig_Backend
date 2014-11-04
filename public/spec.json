@@ -13,23 +13,6 @@
         "application/json"
     ],
     "paths": {
-        "/user/all": {
-            "get": {
-                "summary": "All Users",
-                "description": "Lists all users in the Database",
-                "responses": {
-                    "200": {
-                        "description": "An array of User Objects",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "User"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/user/id/{userid}": {
             "get": {
                 "summary": "Retrieves user by ID",
@@ -91,6 +74,21 @@
             }
         },
         "/user": {
+            "get": {
+                "summary": "All Users",
+                "description": "Lists all users in the Database",
+                "responses": {
+                    "200": {
+                        "description": "An array of User Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "User"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "summary": "Creates new User",
                 "description": "Lists all users in the Database",
@@ -112,36 +110,6 @@
                         "schema": {
                             "type": "object",
                             "$ref": "User"
-                        }
-                    }
-                }
-            }
-        },
-        "/post/all": {
-            "get": {
-                "summary": "All Posts",
-                "description": "Lists all posts in the Database",
-                "parameters": [
-                    {
-                        "name": "sortby",
-                        "description": "Sorts posts by the specified value",
-                        "enum": [
-                            "date",
-                            "category",
-                            "price"
-                        ],
-                        "in": "query",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of Post Objects",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "Post"
-                            }
                         }
                     }
                 }
@@ -208,6 +176,34 @@
             }
         },
         "/post": {
+            "get": {
+                "summary": "All Posts",
+                "description": "Lists all posts in the Database",
+                "parameters": [
+                    {
+                        "name": "sortby",
+                        "description": "Sorts posts by the specified value",
+                        "enum": [
+                            "date",
+                            "category",
+                            "price"
+                        ],
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of Post Objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "Post"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "summary": "Creates new Post",
                 "description": "Takes a Post in JSON form and writes to the database.",
@@ -264,7 +260,12 @@
         "/user/deauth": {
             "post": {
                 "summary": "Deauthenticates user",
-                "description": "Ends current session"
+                "description": "Ends current session",
+                "responses": {
+                    "200": {
+                        "description": "successful logout"
+                    }
+                }
             }
         },
         "/category/all": {
