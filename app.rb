@@ -97,6 +97,7 @@ post '/post' do
   user_id = body['user_id']
   description = body['description']
   category = body['category']
+  cost = body['cost']
 
   
   [id, user_id, category].compact.each do |x| 
@@ -106,7 +107,7 @@ post '/post' do
   if [description, user_id, category].all?
     # logic for email verification goes here
     id ||= SecureRandom.uuid
-    Post.create(id: id, user_id: user_id, description: description, category_id: category)
+    Post.create(id: id, user_id: user_id, description: description, category_id: category, cost: cost)
   else
     halt 401
   end

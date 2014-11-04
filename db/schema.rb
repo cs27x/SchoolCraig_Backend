@@ -17,11 +17,16 @@ ActiveRecord::Schema.define(version: 0) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
+  create_table "categories", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.string "name"
+  end
+
   create_table "posts", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "user_id"
-    t.datetime "date",        default: "now()"
+    t.datetime "date",        default: '2014-11-04 03:24:32'
     t.text     "description"
     t.uuid     "category_id"
+    t.integer  "cost"
   end
 
   create_table "users", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
@@ -31,10 +36,6 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "password",  limit: 64
     t.string  "salt",      limit: 32
     t.boolean "activated"
-  end
-  
-  create_table "categories", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.string "name"
   end
 
 end
