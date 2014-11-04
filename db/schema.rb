@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "posts", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "user_id"
-    t.datetime "date",        default: '2014-11-04 03:24:32'
+    t.datetime "date",        default: "now()"
     t.text     "description"
     t.uuid     "category_id"
     t.integer  "cost"
