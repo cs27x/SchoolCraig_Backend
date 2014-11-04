@@ -31,13 +31,10 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "password",  limit: 64
     t.string  "salt",      limit: 32
     t.boolean "activated"
-<<<<<<< HEAD
   end
   
   create_table "categories", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.string "name"
-=======
->>>>>>> master
   end
 
 end
