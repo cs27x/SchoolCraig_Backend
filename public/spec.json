@@ -5,9 +5,9 @@
         "description": "RESTful API for SchoolCraig Project",
         "version": "1.0.0"
     },
-    "host": "localhost:4567",
+    "host": "school-craig.herokuapp.com",
     "schemes": [
-        "http"
+        "https"
     ],
     "produces": [
         "application/json"

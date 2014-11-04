@@ -113,6 +113,7 @@ post '/post' do
 end
 
 get '/post/all' do
+  puts session[:user_id]
   unless session[:user_id] then halt(403) end
   content_type :json
   Post.all.to_json
