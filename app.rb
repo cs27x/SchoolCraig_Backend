@@ -71,15 +71,18 @@ def isUUID?(id)
   !!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.match(id)
 end
 
+before do
+  content_type :json
+end
+
+
 ########## /category #############
 get '/category/all' do
-  content_type :json
   Category.all.to_json
 end
 
 get '/category/id/:id' do |id|
   unless isUUID?(id) then halt(401) end
-  content_type :json
   begin
     Category.find(id).to_json
   rescue ActiveRecord::RecordNotFound
@@ -87,13 +90,26 @@ get '/category/id/:id' do |id|
   end
 end
 
-########## /post #############
-post '/post' do
-  content_type :json
+post '/category' do
+  unless session[:user_id] then halt(403) end
   # parses body of post request
   body = request.body.read
   body = JSON.parse(body)
-  id = body['id']
+  id = body['id'] || SecureRandom.uuid
+  unless isUUID?(id) then halt(401) end
+  name = body['name']
+  if Category.find_by(name: name) then halt(401) end
+
+  name ? Category.create(id: id, name: name) : halt(401)
+end
+
+
+########## /post #############
+post '/post' do
+  # parses body of post request
+  body = request.body.read
+  body = JSON.parse(body)
+  id = body['id'] || SecureRandom.uuid
   user_id = body['user_id']
   description = body['description']
   category = body['category']
@@ -106,7 +122,6 @@ post '/post' do
 
   if [description, user_id, category].all?
     # logic for email verification goes here
-    id ||= SecureRandom.uuid
     Post.create(id: id, user_id: user_id, description: description, category_id: category, cost: cost)
   else
     halt 401
@@ -114,9 +129,7 @@ post '/post' do
 end
 
 get '/post/all' do
-  puts session[:user_id]
   unless session[:user_id] then halt(403) end
-  content_type :json
   Post.all.to_json
 end
 
@@ -126,18 +139,21 @@ delete '/post/id/:id' do |id|
 end
 
 put '/post/id/:id' do |id|
+  # makes sure id is a uuid
   unless isUUID?(id) then halt(401) end
-  content_type :json
+  # makes sure post with id exists
+  mypost = Post.find_by(id: id) || halt(401)
+  # makes sure user owns the post
+  unless mypost.user_id == session[:user_id] then halt(403) end
+
   # parses body of post request
   body = request.body.read
   body = JSON.parse(body)
   description = body['description']
   category_id = body['category_id']
-  
-  if [description, category].all?
-    # logic for email verification goes here
+ 
+  if [description, category_id].all? && isUUID?(category_id)
     Post.update(id, description: description, category_id: category_id)
-    { status: 'success' }.to_json
   else
     halt 401
   end 
@@ -145,7 +161,6 @@ end
 
 get '/post/id/:id' do |id|
   unless isUUID?(id) then halt(401) end
-  content_type :json
   begin
     Post.find(id).to_json
   rescue ActiveRecord::RecordNotFound
@@ -155,22 +170,20 @@ end
 
 ########## /user #############
 post '/user' do
-  content_type :json
   # parses body of post request
   body = request.body.read
   body = JSON.parse(body)
-  uuid = body['id']
+  uuid = body['id'] || SecureRandom.uuid
   fname = body['fname']
   lname = body['lname']
   email = body['email']
   password = body['password']
 
-  if [fname, lname, email, password].all?
-
+  if [fname, lname, email, password].all? && isUUID?(uuid)
     salt = SecureRandom.hex
     password = Digest::SHA256.hexdigest(salt + password)
+    activated = settings.environment == :development
 
-    uuid ||= SecureRandom.uuid
     User.create(
       id: uuid,
       fname: fname,
@@ -178,15 +191,17 @@ post '/user' do
       email: email,
       password: password,
       salt: salt,
-      activated: false
+      activated: activated
     )
-    url = "https://school-craig.herokuapp.com/user/activate/#{uuid}?key=#{Digest::SHA256.hexdigest(salt)}"
-    Mail.deliver do
-      to email
-      from 'sender@heroku.com'
-      subject 'Account activation'
-      content_type 'text/html; charset=UTF-8'
-      body "Please click <a href='#{url}'>here</a> to activate your account"
+    unless activated
+      url = "https://school-craig.herokuapp.com/user/activate/#{uuid}?key=#{Digest::SHA256.hexdigest(salt)}"
+      Mail.deliver do
+        to email
+        from 'sender@heroku.com'
+        subject 'Account activation'
+        content_type 'text/html; charset=UTF-8'
+        body "Please click <a href='#{url}'>here</a> to activate your account"
+      end
     end
   else
     halt 401
@@ -194,12 +209,10 @@ post '/user' do
 end
 
 get '/user/all' do
-  content_type :json
   User.all.to_json(:except => [:salt, :password])
 end
 
 post '/user/auth' do
-  content_type :json
   body = request.body.read
   body = JSON.parse(body)
   email = body['email']
@@ -222,11 +235,10 @@ post '/user/auth' do
 end
 
 post '/user/deauth' do
-  session[:user_id] = nil
+  session.clear
 end
 
 get '/user/id/:id' do |id|
-  content_type :json
   begin
     User.find(id).to_json(:except => [:salt, :password])
   rescue ActiveRecord::RecordNotFound
@@ -253,7 +265,6 @@ put '/user/id/:id' do |id|
   # checks that the user issuing the request is the user being modified
   unless session[:user_id] == id then halt(403) end
 
-  content_type :json
   body = request.body.read
   body = JSON.parse(body)
   fname = body['fname']
@@ -263,7 +274,6 @@ put '/user/id/:id' do |id|
 end
 
 get '/user/activate/:id' do |id|
-  content_type :json
   user = User.find_by(id: id) || halt(401)
   if Digest::SHA256.hexdigest(user.salt) == params['key']
     # activates user
