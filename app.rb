@@ -112,17 +112,18 @@ post '/post' do
   body = JSON.parse(body)
   id = body['id'] || SecureRandom.uuid
   user_id = body['user_id']
+  title = body['title']
   description = body['description']
   category_id = body['category_id']
-  cost = body['cost']
+  cost = body['cost'] || 0
   
   [id, user_id, category_id].compact.each do |x| 
     unless isUUID?(x) then halt(401) end
   end
 
-  if [description, user_id, category_id].all?
+  if [description, title].all?
     # logic for email verification goes here
-    Post.create(id: id, user_id: user_id, description: description, category_id: category_id, cost: cost)
+    Post.create(id: id, user_id: user_id, title: title, description: description, category_id: category_id, cost: cost)
   else
     halt 401
   end
