@@ -13,6 +13,7 @@ RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV
 
 enable :sessions
+set :force_ssl, true
 
 Mail.defaults do
   delivery_method :smtp, {
@@ -128,6 +129,7 @@ post '/post' do
 end
 
 get '/post/all' do
+  puts JSON.pretty_generate(request.env)
   unless session[:user_id] then halt(403) end
   Post.all.to_json
 end
