@@ -381,7 +381,7 @@
                     "type": "string",
                     "description": "description of posting"
                 },
-                "category": {
+                "category_id": {
                     "type": "string",
                     "description": "id for a given category"
                 },
