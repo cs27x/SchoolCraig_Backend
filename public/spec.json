@@ -377,6 +377,10 @@
                     "type": "string",
                     "description": "unique id for associated user"
                 },
+                "title": {
+                    "type": "string",
+                    "description": "title of the post"
+                },
                 "description": {
                     "type": "string",
                     "description": "description of posting"
