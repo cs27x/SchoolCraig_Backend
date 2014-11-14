@@ -156,7 +156,7 @@ put '/post/id/:id' do |id|
   cost = body['cost']
  
   if [description, title].all?
-    Post.update(id, title:  description: description, cost: cost)
+    Post.update(id, title: title, description: description, cost: cost)
   else
     halt 401
   end 
