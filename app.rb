@@ -148,14 +148,15 @@ put '/post/id/:id' do |id|
   # makes sure user owns the post
   unless mypost.user_id == session[:user_id] then halt(403) end
 
-  # parses body of post request
+  # parses body of request
   body = request.body.read
   body = JSON.parse(body)
+  title = body['title']
   description = body['description']
-  category_id = body['category_id']
+  cost = body['cost']
  
-  if [description, category_id].all? && isUUID?(category_id)
-    Post.update(id, description: description, category_id: category_id)
+  if [description, title].all?
+    Post.update(id, title:  description: description, cost: cost)
   else
     halt 401
   end 
