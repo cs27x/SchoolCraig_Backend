@@ -14,7 +14,7 @@ class MyAppTest < MiniTest::Test
   end
   
   def setup
-    # use later, perhaps
+    User.delete_all(email: 'test@vanderbilt.edu')
   end
 
   ## Users
@@ -32,7 +32,7 @@ class MyAppTest < MiniTest::Test
 
     get "/user/id/#{user_uuid}"
     assert last_response.ok? , 'Error in GET /user/id response'
-    test_user = response.body.read
+    test_user = last_response.body
     test_user = JSON.parse(test_user)
     assert test_user['id'] == user_uuid, 'Error in GET /user/id'
     assert test_user['fname'] == 'Alexander', 'Error in GET /user/id'
@@ -40,14 +40,14 @@ class MyAppTest < MiniTest::Test
     
     get '/user/all'
     assert last_response.ok? , 'Error in GET /user/all response'
-    all_users = response.body.read
+    all_users = last_response.body
     all_users = JSON.parse(all_users)
-    assert all_users.include? test_user, 'Error in GET /user/all does not include newly added user'
+    assert all_users.include?(test_user), 'Error in GET /user/all does not include newly added user'
     
     delete "/user/id/#{user_uuid}"
     assert last_response.ok? , 'Error in DELETE /user/id response'
     get '/user/all'
-    all_users = response.body.read
+    all_users = last_response.body
     all_users = JSON.parse(all_users)
     assert !(all_users.include? test_user), 'Error in DELETE /user/id does not remove user'
     
