@@ -28,7 +28,7 @@ class MyAppTest < MiniTest::Test
     post '/category', body = { 'id' => @category_uuid, 'name' => 'Furniture' }.to_json
     assert last_response.ok? , 'Error in POST /category'
 
-    Post.delete_all(title: 'Bike for sale')
+    Post.delete_all(title: 'New Bike for sale')
   end
 
   ## Posts
