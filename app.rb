@@ -142,12 +142,12 @@ get '/post/all' do
 end
 
 delete '/post/id/:id' do |id|
+  unless isUUID?(id) then halt(401) end
   # makes sure post with id exists
   mypost = Post.find_by(id: id) || halt(401)
   # makes sure user owns the post
   unless mypost.user_id == session[:user_id] then halt(403) end
   
-  unless isUUID?(id) then halt(401) end
   if Post.delete(id).zero? then halt(401) end
 end
 
@@ -256,6 +256,7 @@ end
 
 get '/user/id/:id' do |id|
   unless session[:user_id] then halt(403) end
+  unless isUUID?(id) then halt(401) end
   begin
     User.find(id).to_json
   rescue ActiveRecord::RecordNotFound
