@@ -112,6 +112,7 @@ post '/post' do
   body = JSON.parse(body)
   id = body['id'] || SecureRandom.uuid
   user_id = body['user_id']
+  unless session[:user_id] then halt(403) end
   title = body['title']
   description = body['description']
   category_id = body['category_id']
@@ -136,6 +137,7 @@ get '/post/all' do
 end
 
 delete '/post/id/:id' do |id|
+  unless session[:user_id] then halt(403) end
   unless isUUID?(id) then halt(401) end
   if Post.delete(id).zero? then halt(401) end
 end
@@ -163,6 +165,7 @@ put '/post/id/:id' do |id|
 end
 
 get '/post/id/:id' do |id|
+  unless session[:user_id] then halt(403) end
   unless isUUID?(id) then halt(401) end
   begin
     Post.find(id).to_json
@@ -212,6 +215,7 @@ post '/user' do
 end
 
 get '/user/all' do
+  unless session[:user_id] then halt(403) end
   User.all.to_json(:except => [:salt, :password])
 end
 
@@ -238,10 +242,12 @@ post '/user/auth' do
 end
 
 post '/user/deauth' do
+  unless session[:user_id] then halt(403) end
   session.clear
 end
 
 get '/user/id/:id' do |id|
+  unless session[:user_id] then halt(403) end
   begin
     User.find(id).to_json(:except => [:salt, :password])
   rescue ActiveRecord::RecordNotFound
