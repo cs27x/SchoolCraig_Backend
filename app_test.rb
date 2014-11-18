@@ -17,8 +17,13 @@ class MyAppTest < MiniTest::Unit::TestCase
     post_uuid = SecureRandom.uuid
     user_uuid = SecureRandom.uuid
     category_uuid = SecureRandom.uuid 
-
-    post '/post', body = { 'id' => post_uuid, 'user_id' => user_uuid, 'title' => 'Bike for sale', 'description' => 'New bike', 'category_id' => 'category_uuid', 'cost' => '10' }.to_json
+	
+    ## Test data set up
+    post '/user', body = { 'id' => user_uuid, 'fname' => 'Alex' , 'lname' => 'Smith', 'email' => 'test@vanderbilt.edu', 'password' => 'pwd' }.to_json
+    post '/user/auth', body = { 'email' => 'test@vanderbilt.edu', 'password' => 'pwd' }.to_json
+    post '/category', body = { 'id' => category_uuid, 'name' => 'Furniture' }.to_json
+    
+    post '/post', body = { 'id' => post_uuid, 'user_id' => user_uuid, 'title' => 'Bike for sale', 'description' => 'New bike', 'category_id' => category_uuid, 'cost' => '10' }.to_json
     assert last_response.ok?, 'Error in POST /post response'
 
     put "/post/id/#{post_uuid}" , body = { 'title' => 'New Bike for sale', 'description' => 'One New bike', 'cost' => '20' }.to_json
@@ -48,6 +53,9 @@ class MyAppTest < MiniTest::Unit::TestCase
     all_posts = last_response.body
     all_posts = JSON.parse(all_posts)
     assert !(all_posts.include? test_post), 'Error in DELETE /post/id does not remove post'
+    
+    ## Clear test user
+    delete "/user/id/#{user_uuid}"
 end
 
 ## Categories
