@@ -50,6 +50,8 @@ end
 class Post < ActiveRecord::Base
   self.table_name = 'posts'
   self.primary_key = 'id'
+  belongs_to :user, class_name: 'User'
+  belongs_to :category, class_name: 'Category'
 end
 
 ########## User Class #############
@@ -58,6 +60,10 @@ end
 class User < ActiveRecord::Base
   self.table_name = 'users'
   self.primary_key = 'id'
+  has_many :posts
+  def to_json(options = {})
+    super(:except => [:password, :salt, :activated])
+  end
 end
 
 ########## Category Class #############
@@ -118,7 +124,7 @@ post '/post' do
   category_id = body['category_id']
   cost = body['cost'] || 0
   
-  [id, user_id, category_id].compact.each do |x| 
+  [id, user_id, category_id].each do |x|
     unless isUUID?(x) then halt(401) end
   end
 
@@ -131,18 +137,17 @@ post '/post' do
 end
 
 get '/post/all' do
-  puts JSON.pretty_generate(request.env)
   unless session[:user_id] then halt(403) end
-  Post.all.to_json
+  Post.all.to_json(:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id])
 end
 
 delete '/post/id/:id' do |id|
+  unless isUUID?(id) then halt(401) end
   # makes sure post with id exists
   mypost = Post.find_by(id: id) || halt(401)
   # makes sure user owns the post
   unless mypost.user_id == session[:user_id] then halt(403) end
   
-  unless isUUID?(id) then halt(401) end
   if Post.delete(id).zero? then halt(401) end
 end
 
@@ -172,7 +177,7 @@ get '/post/id/:id' do |id|
   unless session[:user_id] then halt(403) end
   unless isUUID?(id) then halt(401) end
   begin
-    Post.find(id).to_json
+    Post.find(id).to_json(:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id])
   rescue ActiveRecord::RecordNotFound
     halt 404
   end
@@ -220,7 +225,7 @@ end
 
 get '/user/all' do
   unless session[:user_id] then halt(403) end
-  User.all.to_json(:except => [:salt, :password])
+  User.all.to_json(:except => [:password, :salt, :activated])
 end
 
 post '/user/auth' do
@@ -239,7 +244,7 @@ post '/user/auth' do
 
   if db_password == password
     session[:user_id] = user.id
-    user.to_json(:except => [:salt, :password, :activated])
+    user.to_json
   else
     halt 401
   end
@@ -251,8 +256,9 @@ end
 
 get '/user/id/:id' do |id|
   unless session[:user_id] then halt(403) end
+  unless isUUID?(id) then halt(401) end
   begin
-    User.find(id).to_json(:except => [:salt, :password])
+    User.find(id).to_json
   rescue ActiveRecord::RecordNotFound
     halt 404
   end

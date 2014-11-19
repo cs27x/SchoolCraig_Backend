@@ -46,10 +46,11 @@ class MyAppTest < MiniTest::Test
     test_post = last_response.body
     test_post = JSON.parse(test_post)
     assert test_post['id'] == post_uuid, 'Error in GET /post/id'
-    assert test_post['user_id'] == @user_uuid, 'Error in GET /post/id'
+    assert test_post['user']['id'] == @user_uuid, 'Error in GET /post/id'
     assert test_post['title'] == 'New Bike for sale', 'Error in GET /post/id'
     assert test_post['description'] == 'One New bike', 'Error in GET /post/id'
-    assert test_post['category_id'] == @category_uuid, 'Error in GET /post/id'
+    assert test_post['category']['id'] == @category_uuid, 'Error in GET /post/id'
+    assert_nil test_post['user']['password'], 'wrongly returns password'
     assert test_post['cost'] == 20, 'Error in GET /post/id'
 
     get '/post/all'
@@ -97,6 +98,7 @@ class MyAppTest < MiniTest::Test
     assert test_user['id'] == @user_uuid, 'Error in GET /user/id'
     assert test_user['fname'] == 'Alexander', 'Error in GET /user/id'
     assert test_user['lname'] == 'Smithy', 'Error in GET /user/id'
+    assert_nil test_user['password'], 'Wrongly returns password'
     
     get '/user/all'
     assert last_response.ok? , 'Error in GET /user/all response'
