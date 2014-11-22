@@ -3,7 +3,6 @@
 
 require 'sinatra'
 require 'json'
-set :database_file, "./config/database.yml"
 require 'sinatra/activerecord'
 require 'securerandom'
 require 'pg'
