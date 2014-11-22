@@ -1,6 +1,7 @@
 require 'rubygems'
 require_relative 'app'
 require 'sinatra'
+set :database_file, "./config/database.yml"
 require 'sinatra/activerecord'
 require 'sinatra/activerecord/rake'
 require 'rake'
