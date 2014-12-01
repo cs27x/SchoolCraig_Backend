@@ -49,6 +49,7 @@ class MyAppTest < MiniTest::Test
     assert test_post['user']['id'] == @user_uuid, 'Error in GET /post/id'
     assert test_post['title'] == 'New Bike for sale', 'Error in GET /post/id'
     assert test_post['description'] == 'One New bike', 'Error in GET /post/id'
+    assert Date.parse(test_post['date']) == Date.today(), 'Incorrect date for post'
     assert test_post['category']['id'] == @category_uuid, 'Error in GET /post/id'
     assert_nil test_post['user']['password'], 'wrongly returns password'
     assert test_post['cost'] == 20, 'Error in GET /post/id'
