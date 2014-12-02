@@ -140,7 +140,8 @@ end
 
 get '/post/all' do
   unless session[:user_id] then halt(403) end
-  Post.all.to_json(:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id])
+  options = {:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id]}
+  Post.all.order(date: :desc).to_json(options)
 end
 
 delete '/post/id/:id' do |id|
@@ -178,8 +179,10 @@ end
 get '/post/id/:id' do |id|
   unless session[:user_id] then halt(403) end
   unless isUUID?(id) then halt(401) end
+
+  options = {:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id]}
   begin
-    Post.find(id).to_json(:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id])
+    Post.find(id).to_json(options)
   rescue ActiveRecord::RecordNotFound
     halt 404
   end
