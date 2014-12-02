@@ -298,6 +298,7 @@ get '/user/activate/:id' do |id|
     user.update_attribute('activated', true)
     # logs user in
     session[:user_id] = user.id
+    "Success!"
   else
     halt 401
   end
