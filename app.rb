@@ -127,11 +127,12 @@ post '/post' do
   category_id = body['category_id']
   cost = body['cost'] || 0
 
-  if Post.find_by(id: id) then halt(401) end 
+  # checks that post with id does not exist
+  if !isUUID?(id) || Post.find_by(id: id) then halt(401) end
 
-  [id, category_id].each do |x|
-    unless isUUID?(x) then halt(401) end
-  end
+  # checks that category is valid
+  if !isUUID?(category_id) || !Category.find_by(id: category_id) then halt(401) end
+
 
   if [description, title].all?
     # logic for email verification goes here
