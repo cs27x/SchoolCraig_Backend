@@ -105,7 +105,7 @@ post '/category' do
   id = body['id'] || SecureRandom.uuid
   unless isUUID?(id) then halt(401) end
   name = body['name']
-  if Category.find_by(name: name) then halt(401) end
+  if Category.find_by(name: name) || Category.find_by(id: id) then halt(401) end
 
   name ? Category.create(id: id, name: name) : halt(401)
 end
@@ -114,17 +114,19 @@ end
 ########## /post #############
 post '/post' do
   # parses body of post request
+  unless session[:user_id] then halt(403) end
   body = request.body.read
   body = JSON.parse(body)
   id = body['id'] || SecureRandom.uuid
-  user_id = body['user_id']
-  unless session[:user_id] == user_id then halt(403) end
+  user_id = session[:user_id]
   title = body['title']
   description = body['description']
   category_id = body['category_id']
   cost = body['cost'] || 0
-  
-  [id, user_id, category_id].each do |x|
+
+  if Post.find_by(id: id) then halt(401) end 
+
+  [id, category_id].each do |x|
     unless isUUID?(x) then halt(401) end
   end
 
@@ -193,6 +195,9 @@ post '/user' do
   lname = body['lname']
   email = body['email']
   password = body['password']
+  
+  if User.find_by(email: email) || User.find_by(id: uuid) then halt(401) end
+
 
   if [fname, lname, email, password].all? && isUUID?(uuid)
     salt = SecureRandom.hex
@@ -265,21 +270,17 @@ get '/user/id/:id' do |id|
 end
 
 delete '/user/id/:id' do |id|
-  unless isUUID?(id) then halt(401) end
+  # checks that the user issuing the request is the user being deleted
+  unless session[:user_id] == id then halt(403) end
 
   # deletes all associated posts
   Post.where(user_id: id).delete_all
 
-  # checks that the user issuing the request is the user being deleted
-  unless session[:user_id] == id then halt(403) end
-  
   # makes sure deletion is successful
-  if User.delete(id).zero? then hal(401) end
+  if User.delete(id).zero? then halt(401) end
 end
 
 put '/user/id/:id' do |id|
-  unless isUUID?(id) then halt(401) end
-
   # checks that the user issuing the request is the user being modified
   unless session[:user_id] == id then halt(403) end
 
@@ -292,6 +293,7 @@ put '/user/id/:id' do |id|
 end
 
 get '/user/activate/:id' do |id|
+  unless isUUID?(id) then halt(401) end
   user = User.find_by(id: id) || halt(401)
   if Digest::SHA256.hexdigest(user.salt) == params['key']
     # activates user
