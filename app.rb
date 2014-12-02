@@ -12,7 +12,10 @@ require 'mail'
 RACK_ENV = (ENV["RACK_ENV"] ||= "development").to_sym
 set :environment, RACK_ENV
 
-enable :sessions
+use Rack::Session::Cookie, :key => 'rack.session',
+                           :path => '/',
+                           :expire_after => 2592000, # In seconds
+                           :secret => ENV['COOKIE_SECRET']
 set :force_ssl, true
 
 Mail.defaults do
