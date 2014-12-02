@@ -114,11 +114,11 @@ end
 ########## /post #############
 post '/post' do
   # parses body of post request
+  unless session[:user_id] then halt(403) end
   body = request.body.read
   body = JSON.parse(body)
   id = body['id'] || SecureRandom.uuid
-  user_id = body['user_id']
-  unless session[:user_id] == user_id then halt(403) end
+  user_id = session[:user_id]
   title = body['title']
   description = body['description']
   category_id = body['category_id']
