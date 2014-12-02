@@ -1,14 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.1.6)
-      activesupport (= 4.1.6)
+    activemodel (4.1.7)
+      activesupport (= 4.1.7)
       builder (~> 3.1)
-    activerecord (4.1.6)
-      activemodel (= 4.1.6)
-      activesupport (= 4.1.6)
+    activerecord (4.1.7)
+      activemodel (= 4.1.7)
+      activesupport (= 4.1.7)
       arel (~> 5.0.0)
-    activesupport (4.1.6)
+    activesupport (4.1.7)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -21,20 +21,23 @@ GEM
       json (~> 1.4)
       nokogiri (>= 1.4.4)
     builder (3.2.2)
+    dotenv (0.11.1)
+      dotenv-deployment (~> 0.0.2)
+    dotenv-deployment (0.0.2)
+    foreman (0.75.0)
+      dotenv (~> 0.11.1)
+      thor (~> 0.19.1)
     i18n (0.6.11)
     json (1.8.1)
     kgio (2.9.2)
-    mail (2.6.1)
+    mail (2.6.3)
       mime-types (>= 1.16, < 3)
-    mime-types (2.3)
+    mime-types (2.4.3)
     mini_portile (0.6.0)
     minitest (5.4.2)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    nokogiri (1.6.3.1-x86-mingw32)
-      mini_portile (= 0.6.0)
     pg (0.17.1)
-    pg (0.17.1-x86-mingw32)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -49,6 +52,7 @@ GEM
     sinatra-activerecord (2.0.2)
       activerecord (>= 3.2)
       sinatra (~> 1.0)
+    thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
     tzinfo (1.2.2)
@@ -60,11 +64,11 @@ GEM
 
 PLATFORMS
   ruby
-  x86-mingw32
 
 DEPENDENCIES
   activerecord
   aws-sdk
+  foreman
   mail
   minitest
   pg
