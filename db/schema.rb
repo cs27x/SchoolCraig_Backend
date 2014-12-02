@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141114034336) do
+ActiveRecord::Schema.define(version: 20141201232913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20141114034336) do
 
   create_table "posts", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.uuid     "user_id"
-    t.datetime "date",                   default: '2014-11-04 22:03:08'
+    t.datetime "date",                   default: "now()"
     t.text     "description"
     t.uuid     "category_id"
     t.integer  "cost"
