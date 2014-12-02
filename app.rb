@@ -193,6 +193,9 @@ post '/user' do
   lname = body['lname']
   email = body['email']
   password = body['password']
+  
+  if User.find_by(email: email) || User.find(uuid) then halt(401) end
+
 
   if [fname, lname, email, password].all? && isUUID?(uuid)
     salt = SecureRandom.hex
