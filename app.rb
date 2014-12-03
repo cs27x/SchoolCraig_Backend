@@ -145,7 +145,7 @@ end
 get '/post/all' do
   unless session[:user_id] then halt(403) end
   options = {:include => [{:user => {:except => [:salt, :password, :activated]}}, :category], :except => [:user_id, :category_id]}
-  Post.all.order(date: :desc).to_json(options)
+  Post.includes(:user, :category).order(date: :desc).to_json(options)
 end
 
 delete '/post/id/:id' do |id|

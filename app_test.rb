@@ -49,7 +49,7 @@ class MyAppTest < MiniTest::Test
     assert test_post['user']['id'] == @user_uuid, 'Error in GET /post/id'
     assert test_post['title'] == 'New Bike for sale', 'Error in GET /post/id'
     assert test_post['description'] == 'One New bike', 'Error in GET /post/id'
-    assert Date.parse(test_post['date']) == Date.today(), 'Incorrect date for post'
+    assert Date.parse(test_post['date']) == Date.parse(Time.now.utc.to_s), 'Incorrect date for post'
     assert test_post['category']['id'] == @category_uuid, 'Error in GET /post/id'
     assert_nil test_post['user']['password'], 'wrongly returns password'
     assert test_post['cost'] == 20, 'Error in GET /post/id'
@@ -88,7 +88,6 @@ class MyAppTest < MiniTest::Test
 
   ## Users
   def test_user
-    
     put "/user/id/#{@user_uuid}", body = {'fname' => 'Alexander' , 'lname' => 'Smithy'}.to_json
     assert last_response.ok? , 'Error in PUT /user/id response'
 
@@ -116,6 +115,6 @@ class MyAppTest < MiniTest::Test
     
     post '/user/deauth'
     assert last_response.ok? , 'Error in POST /user/deauth response'
-    
   end
+
 end
