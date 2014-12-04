@@ -215,7 +215,7 @@ post '/user' do
       id: uuid,
       fname: fname,
       lname: lname,
-      email: email,
+      email: email.downcase,
       password: password,
       salt: salt,
       activated: activated
@@ -246,7 +246,7 @@ post '/user/auth' do
   email = body['email']
   password = body['password']
 
-  user = User.find_by(email: email) || halt(401)
+  user = User.find_by(email: email.downcase) || halt(401)
   user.activated || halt(403)    
 
   salt = user.salt
